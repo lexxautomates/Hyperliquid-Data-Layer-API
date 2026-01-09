@@ -84,7 +84,7 @@ This is the data that used to cost hedge funds millions of dollars. Now it's acc
 ## Quick Start
 
 ### Step 1: Get Your API Key
-Visit **https://moondev.com** to get your free API key.
+Visit **https://moondev.com** to get your free API key. Check out the **[full docs](https://moondev.com/docs)** for detailed guides.
 
 ### Step 2: Install Dependencies
 ```bash
@@ -130,7 +130,7 @@ Every example is a standalone Python script with beautiful terminal output. Run 
 | `13_binance_liquidations.py` | Binance Futures liquidations for comparison |
 | `14_multi_liquidations.py` | Combined liqs from Hyperliquid, Binance, Bybit, OKX |
 
-See the [examples/README.md](examples/README.md) for complete API documentation.
+See the [examples/README.md](examples/README.md) for the API reference, or visit **https://moondev.com/docs** for the full documentation.
 
 ---
 
@@ -149,7 +149,8 @@ Wall Street had their turn. Now it's ours.
 ## Links
 
 - **Get API Key:** https://moondev.com
-- **API Documentation:** [examples/README.md](examples/README.md)
+- **Full Documentation:** https://moondev.com/docs
+- **API Reference:** [examples/README.md](examples/README.md)
 - **Hyperliquid:** https://hyperliquid.xyz
 - **Issues:** https://github.com/moondevonyt/Hyperliquid-Data-Layer-API/issues
 
