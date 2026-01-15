@@ -75,6 +75,7 @@ This data layer gives you access to everything Wall Street kept hidden:
 | **Trade History** | Get complete fill history for any wallet |
 | **HLP Strategies** | See inside Hyperliquid's $210M+ market-making protocol |
 | **HLP Sentiment** | THE BIG ONE! Z-scores showing retail positioning (squeeze signals) |
+| **HLP Flip Tracker (NEW!)** | Live delta + historical flips when HLP crosses long↔short |
 | **Order Flow** | Buy pressure vs sell pressure, cumulative delta |
 | **Live Prices** | Real-time tick data for all major coins |
 | **Blockchain Events** | Transfers, swaps, deposits - as they happen |

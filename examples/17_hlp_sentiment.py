@@ -266,6 +266,50 @@ def create_historical_context(sentiment_data):
     )
 
 
+def create_flip_tracker_panel(api):
+    """Create panel showing HLP flip tracker data"""
+    try:
+        delta_data = api.get_hlp_delta()
+        flips_data = api.get_hlp_flips()
+    except Exception as e:
+        return Panel(f"[red]Error: {e}[/red]", title="Flip Tracker")
+
+    net_delta = delta_data.get('net_delta', 0)
+    long_exp = delta_data.get('long_exposure', 0)
+    short_exp = delta_data.get('short_exposure', 0)
+    direction = "[green]LONG[/green]" if net_delta > 0 else "[red]SHORT[/red]"
+
+    # Get recent flips
+    flips = flips_data.get('flips', []) if isinstance(flips_data, dict) else []
+    flip_count = len(flips)
+
+    content = f"""[bold white]📊 LIVE DELTA[/bold white]
+
+HLP Direction: {direction}
+Net Delta: [cyan]{format_usd(net_delta)}[/cyan]
+Long Exposure: [green]{format_usd(long_exp)}[/green]
+Short Exposure: [red]{format_usd(short_exp)}[/red]
+
+[bold white]🔄 RECENT FLIPS[/bold white]: {flip_count} recorded
+"""
+
+    # Show last 3 flips
+    for flip in flips[:3]:
+        from_dir = flip.get('from_direction', '?')
+        to_dir = flip.get('to_direction', '?')
+        hold_hrs = flip.get('hold_duration_hours', 0)
+        btc_px = flip.get('btc_price', 0)
+        flip_time = flip.get('datetime', '')[:16]
+        content += f"\n  {flip_time} | {from_dir}→{to_dir} | held {hold_hrs:.1f}h | BTC ${btc_px:,.0f}"
+
+    return Panel(
+        content,
+        title="[bold cyan]🔄 HLP Flip Tracker[/bold cyan]  [dim]GET /api/hlp/delta + /api/hlp/flips[/dim]",
+        border_style="cyan",
+        padding=(1, 2)
+    )
+
+
 def create_footer():
     """Create footer with timestamp and branding"""
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -320,6 +364,12 @@ def main():
     guide_panel = create_z_score_guide()
     history_panel = create_historical_context(sentiment_data)
     console.print(Columns([guide_panel, history_panel], equal=True, expand=True))
+
+    console.print()
+
+    # Flip tracker - Moon Dev
+    flip_panel = create_flip_tracker_panel(api)
+    console.print(flip_panel)
 
     # Summary
     z_score = sentiment_data.get('z_score', sentiment_data.get('zscore', 0)) if isinstance(sentiment_data, dict) else 0

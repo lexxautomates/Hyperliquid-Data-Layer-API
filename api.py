@@ -661,6 +661,68 @@ class MoonDevAPI:
         response = self._get("/api/hlp/correlation")
         return response.json()
 
+    def get_hlp_delta(self):
+        """
+        Get live HLP net delta calculation.
+
+        Shows real-time HLP positioning across all vaults.
+        Polls every 30 seconds, snapshots every 60 seconds.
+
+        Returns:
+            dict with:
+                - net_delta: Current net exposure (positive=LONG, negative=SHORT)
+                - long_exposure: Total long exposure in USD
+                - short_exposure: Total short exposure in USD
+                - position_count: Number of positions across vaults
+                - timestamp: Last update time
+        """
+        response = self._get("/api/hlp/delta")
+        return response.json()
+
+    def get_hlp_flips(self):
+        """
+        Get historical HLP flip events (when delta crosses zero).
+
+        A flip occurs when HLP's net delta crosses from long to short
+        or vice versa. Each flip is recorded with BTC/ETH price context.
+
+        Returns:
+            list of flip events:
+            [
+                {
+                    "datetime": "2026-01-14T15:30:00Z",
+                    "from_direction": "long",
+                    "to_direction": "short",
+                    "from_delta": 500000,
+                    "to_delta": -200000,
+                    "hold_duration_hours": 4.5,
+                    "btc_price": 95000,
+                    "eth_price": 3300
+                }
+            ]
+        """
+        response = self._get("/api/hlp/flips")
+        return response.json()
+
+    def get_hlp_flip_stats(self):
+        """
+        Get aggregated HLP flip statistics.
+
+        Provides analysis of historical flip patterns including
+        average hold durations, flip frequency, and performance metrics.
+
+        Returns:
+            dict with:
+                - total_flips: Number of recorded flips
+                - avg_hold_duration_hours: Average time between flips
+                - long_to_short_count: Number of long→short flips
+                - short_to_long_count: Number of short→long flips
+                - current_direction: Current HLP direction (long/short)
+                - current_hold_hours: Hours in current direction
+        """
+        response = self._get("/api/hlp/flip-stats")
+        return response.json()
+
     # ==================== SMART MONEY ====================
     def get_smart_money_rankings(self):
         """Get Top 100 smart money + Bottom 100 dumb money rankings"""

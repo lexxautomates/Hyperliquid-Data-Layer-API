@@ -80,6 +80,14 @@ AVAILABLE HYPERLIQUID API ENDPOINTS (Moon Dev's Data Layer):
 • get_hlp_timing() - Hourly/session profitability analysis
 • get_hlp_correlation() - Delta-price correlation by coin
 
+== HLP FLIP TRACKER (NEW!) ==
+• get_hlp_delta() - Live HLP net delta (long/short exposure, position count)
+  Returns: net_delta, long_exposure, short_exposure, position_count
+• get_hlp_flips() - Historical flip events when HLP crosses long↔short
+  Each flip has: from/to direction, delta values, hold duration, BTC/ETH price
+• get_hlp_flip_stats() - Aggregated flip statistics
+  Returns: total flips, avg hold duration, current direction
+
 == SMART MONEY ==
 • get_smart_money_rankings() - Top 100 smart money + Bottom 100 dumb money
 • get_smart_money_leaderboard() - Top 50 performers with details
