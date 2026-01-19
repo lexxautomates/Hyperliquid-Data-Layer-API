@@ -1,8 +1,14 @@
 # Alpha Extraction Ideas - Moon Dev API
 
-**Trading Bot Ideas for the Hyperliquid Data Layer**
+**Brain Ticklers for the Hyperliquid Data Layer**
 
-These are alpha extraction concepts based on the API endpoints. Each example file exposes data that Wall Street has used for decades - now available to anyone with an API key. Below are trading bot ideas for each endpoint.
+## Disclaimer
+
+**None of this is financial advice.** These are random ideas that aren't necessarily going to work. Seriously - don't just run any of this in a bot and lose money.
+
+The point of this doc is to tickle your brain cells so YOU come up with your own ideas that you can then backtest, validate, and iterate on. Treat these as conversation starters, not trading strategies.
+
+If something sounds interesting, go explore it. Pull the data. Look at it. See if the pattern even exists. Then if it does, backtest the hell out of it before risking real money.
 
 Built with love by Moon Dev
 
@@ -12,11 +18,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/liquidations/{timeframe}.json`
 
-1. **Liquidation Cascade Trader** - When liquidations spike 3x above the 1-hour rolling average, enter positions in the cascade direction (short if long liqs dominate). Liquidations beget more liquidations - ride the cascade.
+1. **Liquidation Cascade Patterns** - Liquidations tend to cause more liquidations. Could there be something interesting when liquidation volume spikes way above normal? Maybe the cascade direction matters. Worth exploring.
 
-2. **Liquidation Exhaustion Bot** - After a massive liquidation event ($10M+ in 10 minutes), fade the move. Extreme liquidations often mark local bottoms/tops. Enter counter-trend with tight stops.
+2. **Liquidation Exhaustion** - After massive liquidation events, does the market tend to reverse? Or continue? Pull the data and see if extreme liquidations mark turning points.
 
-3. **Liquidation Imbalance Scanner** - Track long vs short liquidation ratios. When 80%+ of liquidations are one-sided for 4+ hours, the market is overextended. Position for mean reversion.
+3. **Long vs Short Imbalance** - What happens when liquidations are heavily one-sided for extended periods? Is the market actually overextended, or does the trend continue? The data's there to find out.
 
 ---
 
@@ -24,11 +30,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/positions/all.json` (148 symbols)
 
-1. **Liquidation Hunting Bot** - Monitor positions within 2% of liquidation price. When BTC moves toward these levels, front-run the liquidation cascade. Target the clusters.
+1. **Liquidation Level Clustering** - You can see where positions are close to getting liquidated. Are there price levels where a bunch of liquidations would trigger at once? What happens when price approaches those clusters?
 
-2. **Whale Shadow Trader** - When top 10 whales are 70%+ aligned (all long or all short), follow them. Large players often have better information. Exit when whale consensus breaks.
+2. **Whale Consensus** - When most big players are positioned the same direction, does that mean anything? Do they know something, or do they get rekt together? Check the data.
 
-3. **Risk Concentration Alert** - When total position value in a single symbol exceeds $500M with >60% one-sided, expect volatility. Trade the direction of crowded positioning getting stopped out.
+3. **Crowded Trades** - When everyone's on one side of a trade, sometimes it unwinds violently. Sometimes the crowd is right. Which is it for different setups? Worth investigating.
 
 ---
 
@@ -36,11 +42,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/whales.json` ($25k+ trades)
 
-1. **Whale Order Flow Bot** - When whale buy volume exceeds sell volume by 3:1 over 15 minutes, enter long. Whales move markets. Ride their wake.
+1. **Whale Flow Direction** - Whales are making $25k+ trades all the time. Is the aggregate direction meaningful? Does heavy whale buying actually precede price moves, or is it noise?
 
-2. **Whale Reversal Detector** - Track when a whale who was accumulating starts distributing. If a whale does 5 buys then 3 sells of similar size, they're exiting. Front-run the distribution.
+2. **Whale Behavior Patterns** - Can you identify when a whale switches from buying to selling? Does that transition tell you anything useful about what's coming?
 
-3. **Multi-Whale Consensus Trader** - When 3+ different whale addresses buy the same asset within 1 hour, it's coordinated. Follow the smart money with a position sized to the total whale volume.
+3. **Coordinated Activity** - When multiple whales buy the same thing around the same time, is that signal or coincidence? The data lets you find out.
 
 ---
 
@@ -48,11 +54,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/events.json`
 
-1. **Large Deposit Anticipation Bot** - When a whale bridges $500k+ to Hyperliquid, they're about to trade. Monitor for the deposit event, then watch their first position. Mirror it.
+1. **Deposit Watching** - When someone bridges a large amount to Hyperliquid, they probably want to trade. What happens after large deposits? Any patterns worth tracking?
 
-2. **Withdrawal Spike Alert** - Mass withdrawals often precede volatility (people moving funds to safety). When withdrawal events spike 5x, reduce exposure and wait for clarity.
+2. **Withdrawal Patterns** - Do mass withdrawals tell you anything about what's coming? Or is it just noise? The event stream has the data.
 
-3. **Swap Pattern Analyzer** - Track swap events for arbitrage opportunities. If swaps consistently go USDC→asset, accumulation is happening. Position before the crowd notices.
+3. **Swap Flow Analysis** - If swaps are consistently going one direction (like USDC into a specific asset), could that be early accumulation signal? Explore it.
 
 ---
 
@@ -60,11 +66,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/contracts.json`
 
-1. **New Contract Alpha** - When a new high-value contract appears, it's often a new trading strategy or protocol. Monitor early interactions for alpha on what they're trading.
+1. **New Contract Activity** - When new contracts show up and start trading, what are they doing? Could be interesting to watch early behavior of new protocols.
 
-2. **Contract Activity Divergence** - If a contract that's been dormant suddenly shows activity, something changed. Track the delta and investigate what they're doing differently.
+2. **Dormant Contract Wakeups** - If a contract that's been quiet suddenly gets active, why? Something changed. Might be worth investigating.
 
-3. **Protocol Flow Tracker** - Aggregate flows across all known contracts to understand net protocol sentiment. Are smart contracts net accumulating or distributing?
+3. **Aggregate Contract Flows** - Are smart contracts as a whole net buying or selling? Does that aggregate flow tell you anything useful?
 
 ---
 
@@ -72,11 +78,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/ticks/{symbol}_{timeframe}.json`
 
-1. **Tick Velocity Bot** - When tick frequency (trades per second) spikes 5x above normal while price is flat, a big move is brewing. Enter on the direction of the first significant price move.
+1. **Tick Frequency Changes** - Does the rate of ticks (trades per second) tell you anything about what's coming? Does activity pick up before big moves?
 
-2. **Volatility Breakout System** - Calculate tick-by-tick volatility. When volatility compresses below the 20-period low then expands, trade the breakout direction with a 2:1 reward-to-risk.
+2. **Volatility Compression** - What happens after periods of low volatility? Does the data show any patterns around volatility expansion?
 
-3. **Micro-Structure Alpha** - Analyze tick patterns for recurring signatures. Certain tick sequences (3 up ticks, pause, 5 up ticks) may precede continuation moves. Pattern match and trade.
+3. **Tick Patterns** - Are there any recurring tick sequences that seem to precede certain moves? Might be nothing, might be something. The tick data lets you look.
 
 ---
 
@@ -84,11 +90,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/orderflow.json`, `/api/imbalance/{timeframe}.json`
 
-1. **Delta Divergence Bot** - When price makes a new high but cumulative delta doesn't confirm (negative delta on up move), the move is weak. Fade it with a stop above the high.
+1. **Delta Divergence** - When price goes up but the order flow delta doesn't confirm, is that meaningful? Classic order flow concept - worth checking if it actually works here.
 
-2. **Absorption Detector** - When buy pressure is high but price isn't moving, large sellers are absorbing. The next direction is likely down. Position short when absorption is confirmed.
+2. **Absorption Patterns** - Heavy buying but price not moving could mean sellers are absorbing. Or it could mean nothing. The order flow data lets you investigate.
 
-3. **Imbalance Mean Reversion** - When buy/sell imbalance exceeds 2 standard deviations, expect mean reversion. Enter counter to the extreme imbalance with a tight timeframe.
+3. **Extreme Imbalances** - When buy/sell imbalance gets really one-sided, what tends to happen next? Continuation? Reversal? Find out.
 
 ---
 
@@ -96,11 +102,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/trades.json`, `/api/large_trades.json`
 
-1. **Large Trade Momentum** - When 3+ trades over $100k hit in the same direction within 5 minutes, momentum is real. Enter with the flow, trail stop.
+1. **Large Trade Clusters** - When multiple large trades hit in the same direction in a short window, does that momentum mean anything? Or is it just noise?
 
-2. **Trade Size Analysis** - Average trade size increasing while price rises = strong trend. Average size decreasing = weak hands buying. Trade with conviction when size confirms.
+2. **Trade Size Trends** - Is the average trade size going up or down? Does that correlate with price direction or trend strength? Interesting question.
 
-3. **Time-Weighted Trade Bot** - Weight trades by recency and size. Recent large trades matter more than old small ones. Create a proprietary signal and trade when it crosses thresholds.
+3. **Recent vs Old Trades** - Maybe recent trades matter more than older ones. Maybe not. You could weight them differently and see what kind of signals emerge.
 
 ---
 
@@ -108,11 +114,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/smart_money/rankings.json`, `/api/smart_money/signals_{timeframe}.json`
 
-1. **Copy Top 10 Traders** - Mirror the positions of the top 10 ranked traders. When the majority are long, be long. Position size proportional to their conviction level.
+1. **Following Top Performers** - The API ranks traders by performance. Does following the top performers actually work going forward? Or is past performance just that - past?
 
-2. **Fade Bottom 100** - When the worst performers (bottom 100) are heavily positioned one way, fade them. "Dumb money" is the best counter-indicator.
+2. **Fading Poor Performers** - If you know who's consistently losing money, maybe fading them has edge? Classic contrary indicator concept. Test it.
 
-3. **Smart Money Divergence** - When smart money and dumb money disagree, follow smart money. The divergence signal has edge. Size up when divergence is extreme.
+3. **Smart vs Dumb Disagreement** - When the best traders and worst traders are positioned opposite each other, who tends to be right? Might be an interesting divergence to track.
 
 ---
 
@@ -120,11 +126,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/user/{address}/positions`
 
-1. **Specific Whale Tracker** - Identify 10 consistently profitable addresses. Build a bot that monitors their positions in real-time and mirrors entries with slight delay.
+1. **Tracking Specific Wallets** - You can see any wallet's positions. If you identify traders who seem consistently good, what are they holding? Does tracking them help?
 
-2. **Position Change Alerts** - When a tracked wallet increases position by 50%+, they're adding to winners. Follow the addition. When they reduce, respect their exit.
+2. **Position Size Changes** - When someone you're watching significantly increases or decreases a position, does that tell you anything? Maybe they know something, maybe they don't.
 
-3. **Portfolio Correlation Bot** - Track how a whale's portfolio changes over time. If they rotate from BTC to alts, something's changing. Front-run the rotation.
+3. **Portfolio Rotation** - If you watch how certain wallets rotate between assets over time, are there patterns? Do they rotate before moves happen?
 
 ---
 
@@ -132,11 +138,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/user/{address}/fills`
 
-1. **Win Rate Analyzer** - Calculate win rate for top traders by analyzing their fills. Copy traders with >60% win rate AND positive expectancy. Both matter.
+1. **Win Rate Analysis** - You can calculate any wallet's historical win rate from their fills. Does a high historical win rate predict future performance? Worth checking.
 
-2. **Entry Pattern Learner** - Study how top traders enter positions (DCA, all-in, scaled). Adopt the patterns that correlate with higher PnL.
+2. **Entry Style Study** - How do profitable traders enter positions? All at once? Scaled in? Does their entry style correlate with outcomes?
 
-3. **Exit Timing Bot** - Analyze when profitable traders exit. If they consistently exit at 15% profit, use that as your target. Inherit their discipline.
+3. **Exit Patterns** - When do good traders take profits? When do they cut losses? Studying their fills might reveal discipline patterns worth learning from.
 
 ---
 
@@ -144,11 +150,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/hlp/positions`, `/api/hlp/trades`
 
-1. **HLP Counter-Trade Bot** - HLP is the house. When HLP is heavily short, retail is long. Fade retail by going short with HLP. The house usually wins.
+1. **HLP as Counter-Indicator** - HLP takes the other side of retail trades. If you can see what HLP is positioned, you know what retail is doing. Is fading retail profitable?
 
-2. **Strategy Divergence Alpha** - When different HLP strategies disagree (one long, one short same asset), volatility is coming. Trade a straddle or wait for resolution.
+2. **Strategy Disagreement** - HLP has multiple strategies. When they're positioned differently on the same asset, what does that mean? Confusion? Hedging? Opportunity?
 
-3. **HLP Trade Follower** - When HLP makes a large trade (top 1% by size), follow within 60 seconds. They have information edge from seeing all order flow.
+3. **HLP Trade Size** - When HLP makes unusually large trades, does that tell you anything about market conditions or expected moves?
 
 ---
 
@@ -156,11 +162,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/binance_liquidations/{timeframe}.json`
 
-1. **Cross-Exchange Liquidation Arbitrage** - When Binance liquidations spike but Hyperliquid doesn't, expect spillover. Position on Hyperliquid for the incoming cascade.
+1. **Cross-Exchange Patterns** - When Binance has liquidations but Hyperliquid doesn't (or vice versa), does that divergence mean anything? Does one exchange lead the other?
 
-2. **Exchange Divergence Bot** - If Binance longs are getting liquidated but Hyperliquid longs aren't, price will converge. Trade the convergence on the lagging exchange.
+2. **Exchange Comparison** - Do liquidations hit different exchanges at different times? Is there a consistent leader/follower relationship?
 
-3. **Binance Lead Indicator** - Binance often leads smaller exchanges. Use Binance liquidation direction to predict Hyperliquid liquidations. Be positioned before the cascade hits.
+3. **Binance as Indicator** - Binance is bigger. Maybe their liquidation data predicts what happens on smaller venues? Or maybe not. Check it out.
 
 ---
 
@@ -168,11 +174,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/all_liquidations/{timeframe}.json`
 
-1. **Global Liquidation Tsunami Bot** - When combined liquidations across all 4 exchanges exceed $100M in 1 hour, it's a market-wide event. Position for continuation until volume dies.
+1. **Global Liquidation Events** - When liquidations spike across ALL exchanges simultaneously, that's a market-wide event. What typically follows? The data can tell you.
 
-2. **Exchange Liquidation Sequencing** - Track which exchange liquidates first. If Hyperliquid leads, it's organic. If Binance leads, it's cascading. Trade the follow-through.
+2. **Liquidation Sequencing** - Which exchange gets hit first during cascade events? Is there a pattern to the order? Could that be useful?
 
-3. **Liquidation Correlation Breakdown** - When one exchange has massive liquidations but others don't, something exchange-specific happened. Arbitrage the dislocation.
+3. **Isolated vs Correlated** - When only one exchange has liquidations but others don't, that's different from correlated liquidations. Different situations, maybe different plays.
 
 ---
 
@@ -180,11 +186,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/buyers.json` ($5k+ buyers, HYPE/SOL/XRP/ETH only)
 
-1. **Accumulation Detection Bot** - When unique buyer count increases 50%+ over 24 hours while price is flat, accumulation is happening. Enter before the markup phase.
+1. **Buyer Count Trends** - Is the number of unique buyers increasing or decreasing? Does buyer count correlate with future price moves? Accumulation vibes?
 
-2. **Buyer Concentration Alert** - If 70%+ of buying is from 5 addresses, it's coordinated. Follow if they're known smart money, fade if they're historically wrong.
+2. **Buyer Concentration** - If most buying is coming from just a few addresses, that's different from broad-based buying. Does the concentration tell you anything?
 
-3. **Buy Pressure Divergence** - When buyer count is increasing but price is dropping, large sellers are distributing to new buyers. The sellers know something. Stay out or short.
+3. **Buyers vs Price** - When buyer count goes up but price doesn't, what's happening? Vice versa? The relationship might be interesting.
 
 ---
 
@@ -192,11 +198,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/depositors.json`
 
-1. **New Depositor Surge Bot** - When new depositor count spikes 2x above 7-day average, fresh capital is entering. Bull signal. Position long on high-beta assets.
+1. **New User Growth** - Are new depositors joining Hyperliquid at an increasing or decreasing rate? Does user growth correlate with market conditions?
 
-2. **Depositor Quality Analysis** - Track if new depositors are small (<$1k) or large (>$100k). Large depositors = institutions arriving. More bullish signal.
+2. **Depositor Size Distribution** - Are the new depositors mostly small fish or big players? Does the composition of new users tell you anything about what's coming?
 
-3. **Depositor Retention Tracker** - If depositors are leaving (withdrawals > deposits), risk-off is coming. Reduce exposure proportionally to net outflows.
+3. **Net Flow Direction** - Overall, is money flowing into Hyperliquid or out of it? Could be a macro indicator worth tracking.
 
 ---
 
@@ -204,11 +210,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/hlp/sentiment`
 
-1. **Z-Score Extremes Bot** - When HLP z-score exceeds +2.0 (HLP very long), retail is very short. Enter long for squeeze. Vice versa for z < -2.0. This is THE signal.
+1. **Extreme Z-Scores** - The z-score shows how unusual HLP's positioning is. When it's way out there (very positive or very negative), does that mean retail is about to get squeezed? Maybe. Investigate.
 
-2. **Z-Score Mean Reversion** - When z-score hits +3.0, it WILL revert. Don't chase. Wait for reversion to begin, then enter with the trend back to 0.
+2. **Mean Reversion Tendencies** - Extreme z-scores probably don't stay extreme forever. How quickly do they revert? What happens during the reversion?
 
-3. **Multi-Timeframe Z-Score** - Compare 1-hour z-score to 24-hour z-score. When both are extreme in same direction, the signal is stronger. Size up on alignment.
+3. **Multi-Timeframe Comparison** - Is the short-term z-score saying the same thing as the longer-term one? When they align vs diverge, does that matter?
 
 ---
 
@@ -216,11 +222,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/hlp/liquidators/status`, `/api/hlp/market-maker`, `/api/hlp/timing`
 
-1. **Liquidator Activation Bot** - When HLP liquidators activate, forced selling is imminent. Position for the liquidation direction. Exit when liquidator goes idle.
+1. **Liquidator Status** - When HLP liquidators go active vs idle, what typically happens in the market? Is there a pattern worth knowing?
 
-2. **Timing-Based Entry** - HLP analytics show which hours are most profitable. Only trade during historically profitable hours for the asset. Avoid bad timing.
+2. **Timing Patterns** - HLP timing data shows profitability by hour/session. Are there consistently good or bad times to trade? Maybe, maybe not. Look at the data.
 
-3. **Market Maker Position Tracker** - Strategy B is the market maker. When it's heavily positioned, it's confident in the direction. Follow with smaller size.
+3. **Market Maker Positioning** - How is the HLP market maker positioned? Does their positioning tell you anything about expected moves or volatility?
 
 ---
 
@@ -228,11 +234,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/prices`, `/api/orderbook/{coin}`, `/api/account/{address}`
 
-1. **Orderbook Imbalance Scanner** - Scan all 224 coins for bid/ask imbalances. When bids are 3x asks, upward pressure exists. Enter before the move.
+1. **Orderbook Imbalances** - You can see orderbooks for all coins. When bids and asks are really unbalanced, does that predict short-term direction? Or is it just market maker games?
 
-2. **Multi-Coin Correlation Bot** - Monitor all 224 prices simultaneously. When correlations break (BTC up, ETH flat), trade the spread for convergence.
+2. **Cross-Coin Correlations** - With all prices available, you can track correlations in real-time. When correlations break down, is that opportunity or noise?
 
-3. **Account Concentration Tracker** - Monitor top accounts' positions in real-time without rate limits. When multiple top accounts shift, follow immediately.
+3. **Account Watching** - No rate limits means you can watch multiple accounts' positions without getting throttled. What could you learn from that?
 
 ---
 
@@ -240,11 +246,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/hip3_liquidations/{timeframe}.json`
 
-1. **Stock Liquidation Cascade** - When TSLA or NVDA liquidations spike during market hours, volatility is real. Position for continuation in the liquidation direction.
+1. **Stock Liquidation Patterns** - TSLA, NVDA, and other stocks have liquidations on Hyperliquid now. Do liquidation spikes in stocks behave similarly to crypto? Or differently?
 
-2. **TradFi-Crypto Correlation Bot** - When stock liquidations are high but crypto is calm, expect spillover. Position crypto for the incoming volatility.
+2. **TradFi-Crypto Relationship** - When stock positions are getting liquidated, does anything happen in crypto? Or vice versa? Cross-asset relationships could be interesting.
 
-3. **Category Rotation Alert** - When liquidations shift from stocks to commodities, macro conditions are changing. Adjust portfolio to match the rotation.
+3. **Category Shifts** - Liquidations move between stocks, commodities, indices. When one category heats up, does it tell you anything about macro sentiment?
 
 ---
 
@@ -252,11 +258,11 @@ Built with love by Moon Dev
 
 **Endpoint:** `/api/hip3_ticks/stats.json`, `/api/hip3_ticks/{dex}_{ticker}.json`
 
-1. **Cross-Dex Arbitrage** - If GOLD trades at different prices on xyz vs flx, arbitrage exists. Trade the spread until convergence.
+1. **Cross-Dex Price Differences** - Some assets trade on multiple dexes. Do prices diverge? If so, does convergence happen? Could be interesting to watch.
 
-2. **Pre-IPO Sentiment Bot** - Monitor OPENAI, ANTHROPIC, SPACEX tick data on vntl. Volume spikes may precede news. Position before announcements.
+2. **Pre-IPO Activity** - OPENAI, ANTHROPIC, SPACEX trade as pre-IPO on Hyperliquid. What does activity in these markets tell you about sentiment? Anything?
 
-3. **TradFi Hours Trader** - Trade stocks (xyz, flx) only during traditional market hours when liquidity is highest. Avoid overnight gaps.
+3. **Trading Hours Patterns** - Stocks on Hyperliquid - do they behave differently during traditional market hours vs after hours? The tick data can show you.
 
 ---
 
@@ -264,23 +270,29 @@ Built with love by Moon Dev
 
 **Endpoint:** Multiple HIP3 endpoints combined
 
-1. **Sector Rotation Scanner** - Monitor all 58 HIP3 symbols for momentum. Rotate into the strongest sector (stocks vs commodities vs crypto vs FX).
+1. **Cross-Asset Momentum** - With all 58 HIP3 symbols visible, can you identify which sectors are gaining momentum? Is sector rotation a thing here?
 
-2. **Liquidation-Price Divergence** - When a sector has high liquidations but prices haven't moved much, big moves are coming. Position for the breakout.
+2. **Liquidations vs Price Movement** - When a sector has heavy liquidations but prices haven't moved proportionally, is tension building? Or is it just noise?
 
-3. **Full Market Sentiment Bot** - Combine all HIP3 data into a single sentiment score. When the score is extreme, trade the mean reversion across all correlated assets.
+3. **Combined Sentiment** - Could you build some kind of aggregate sentiment from all this HIP3 data? What would that even look like? Fun to explore.
 
 ---
 
-## Implementation Notes
+## Final Thoughts
 
-These ideas are starting points. Each requires:
-- Backtesting against historical data
-- Risk management rules (position sizing, stop losses)
-- Execution optimization (latency, slippage)
-- Continuous monitoring and adjustment
+Look, all of these ideas might be garbage. Or some might be gold. The point is you have access to data that used to be hidden, and now you can actually test hypotheses instead of just guessing.
 
-**Remember:** Past performance doesn't guarantee future results. Paper trade first. Size appropriately. The API gives you the data - your edge comes from how you use it.
+**The process:**
+1. See an interesting idea
+2. Pull the data
+3. Look at it with your own eyes
+4. If there's something there, backtest it properly
+5. If it still looks good, paper trade it
+6. Only then consider real money
+
+Don't skip steps. Don't assume any of this works. Do the work.
+
+The API gives you the data. What you do with it is up to you.
 
 ---
 
