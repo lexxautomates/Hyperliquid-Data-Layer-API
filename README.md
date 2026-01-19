@@ -67,6 +67,7 @@ This data layer gives you access to everything Wall Street kept hidden:
 |-----------------|----------------|
 | **Liquidations** | See when positions are about to get wiped out - in real-time |
 | **Multi-Exchange Liqs** | Combined liquidations from Hyperliquid, Binance, Bybit, OKX |
+| **HIP3 Liquidations (NEW!)** | Stocks, Commodities, Indices & FX liquidations (TSLA, GOLD, XYZ100, EUR) |
 | **Whale Positions** | Track positions for any of 148 symbols (BTC: $1.9B, ETH: $2.7B, HYPE: $528M) |
 | **Buyer Tracking** | $5k+ buyers on HYPE/SOL/XRP/ETH - accumulation signals |
 | **Smart Money Rankings** | Top 100 profitable traders vs Bottom 100 |
@@ -116,6 +117,7 @@ python examples/14_multi_liquidations.py  # All exchanges: Hyperliquid, Binance,
 python examples/15_buyers.py              # $5k+ buyers on HYPE/SOL/XRP/ETH
 python examples/16_depositors.py          # All Hyperliquid depositors
 python examples/19_market_data.py         # Prices, orderbooks, accounts - NO RATE LIMITS!
+python examples/20_hip3_liquidations.py   # HIP3 liqs: stocks, commodities, indices, FX
 ```
 
 That's it. You're now seeing what Wall Street sees.
@@ -146,7 +148,8 @@ Every example is a standalone Python script with beautiful terminal output. Run 
 | `16_depositors.py` | All Hyperliquid depositors - canonical list of bridged addresses |
 | `17_hlp_sentiment.py` | THE BIG ONE! HLP z-scores showing retail positioning |
 | `18_hlp_analytics.py` | HLP liquidators, market maker, timing, correlation |
-| `19_market_data.py` | **NEW!** All prices, orderbooks, account state - NO RATE LIMITS |
+| `19_market_data.py` | All prices, orderbooks, account state - NO RATE LIMITS |
+| `20_hip3_liquidations.py` | **NEW!** HIP3 liquidations - stocks, commodities, indices, FX |
 
 See the [examples/README.md](examples/README.md) for the API reference, or visit **https://moondev.com/docs** for the full documentation.
 

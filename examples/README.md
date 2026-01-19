@@ -26,6 +26,8 @@ Each file in this folder is a standalone Python script that demonstrates one sec
 | `16_depositors.py` | Depositors | All Hyperliquid depositors - every address that bridged |
 | `17_hlp_sentiment.py` | HLP Sentiment | THE BIG ONE! Z-scores and retail positioning signals |
 | `18_hlp_analytics.py` | HLP Analytics | Liquidator status, market maker, timing, correlation |
+| `19_market_data.py` | Market Data | All prices, orderbooks, account state - NO RATE LIMITS |
+| `20_hip3_liquidations.py` | HIP3 Liqs | **NEW!** Stocks, Commodities, Indices & FX liquidations |
 
 ---
 
@@ -124,6 +126,21 @@ response = requests.get('https://api.moondev.com/api/trades.json?api_key=YOUR_AP
 
 **Timeframes:** 10m, 1h, 4h, 12h, 24h, 2d, 7d, 14d, 30d
 
+### HIP3 LIQUIDATIONS (Stocks, Commodities, Indices, FX)
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/hip3_liquidations/{timeframe}.json` | HIP3 liquidations (traditional finance assets) |
+| `GET /api/hip3_liquidations/stats.json` | HIP3 liquidation statistics with category breakdown |
+
+**Timeframes:** 10m, 1h, 24h, 7d
+
+**Categories tracked:**
+- **Stocks:** TSLA, NVDA, AAPL, META, MSFT, GOOGL, AMZN, AMD, INTC, PLTR, COIN, HOOD, MSTR, ORCL, MU, NFLX, RIVN, BABA (~$100M+ OI)
+- **Commodities:** GOLD, SILVER, COPPER, CL (Oil), NATGAS, URANIUM (~$125M OI)
+- **Indices:** XYZ100 (Nasdaq proxy, ~$120M OI)
+- **FX:** EUR, JPY (~$3M OI)
+
 ### TICK DATA
 
 | Endpoint | Description |
@@ -202,6 +219,11 @@ all_liqs = api.get_all_liquidations("1h")            # Combined liquidations
 binance_liqs = api.get_binance_liquidations("1h")    # Binance only
 bybit_liqs = api.get_bybit_liquidations("1h")        # Bybit only
 okx_liqs = api.get_okx_liquidations("1h")            # OKX only
+
+# === HIP3 LIQUIDATIONS (Stocks, Commodities, Indices, FX) ===
+hip3_stats = api.get_hip3_liquidation_stats()        # Stats with category breakdown
+hip3_liqs = api.get_hip3_liquidations("1h")          # HIP3 liquidations (10m, 1h, 24h, 7d)
+hip3_24h = api.get_hip3_liquidations("24h")          # 24h of HIP3 liqs
 
 # === POSITIONS & WHALES ===
 positions = api.get_positions()              # Top 50 positions across ALL symbols (fast, 1s updates)

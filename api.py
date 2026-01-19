@@ -49,6 +49,12 @@ MULTI-EXCHANGE LIQUIDATIONS:
 - /api/okx_liquidations/{timeframe}.json     - OKX liquidations
   (timeframes: 10m, 1h, 4h, 12h, 24h, 2d, 7d, 14d, 30d)
 
+HIP3 LIQUIDATIONS (Stocks, Commodities, Indices, FX):
+- /api/hip3_liquidations/{timeframe}.json    - HIP3 liquidations (10m, 1h, 24h, 7d)
+- /api/hip3_liquidations/stats.json          - HIP3 liquidation statistics
+  Categories: Stocks (TSLA, NVDA, AAPL, etc.), Commodities (GOLD, SILVER, OIL),
+              Indices (XYZ100), FX (EUR, JPY)
+
 HYPERLIQUID USER DATA:
 - get_user_positions(address)           - Get positions via Hyperliquid API (direct)
 
@@ -836,6 +842,53 @@ class MoonDevAPI:
             timeframe: 10m, 1h, 4h, 12h, 24h, 2d, 7d, 14d, 30d
         """
         response = self._get(f"/api/okx_liquidations/{timeframe}.json")
+        return response.json()
+
+    # ==================== HIP3 LIQUIDATIONS ====================
+    def get_hip3_liquidations(self, timeframe="1h"):
+        """
+        Get HIP3 liquidation data (Stocks, Commodities, Indices, FX).
+
+        HIP3 covers traditional finance assets on Hyperliquid:
+        - Stocks: TSLA, NVDA, AAPL, META, MSFT, GOOGL, AMZN, AMD, INTC, PLTR,
+                  COIN, HOOD, MSTR, ORCL, MU, NFLX, RIVN, BABA
+        - Commodities: GOLD, SILVER, COPPER, CL (Oil), NATGAS, URANIUM
+        - Indices: XYZ100 (Nasdaq proxy)
+        - FX: EUR, JPY
+
+        Args:
+            timeframe: 10m, 1h, 24h, 7d
+
+        Returns:
+            list of liquidation events with:
+                - symbol: Asset symbol (TSLA, GOLD, etc.)
+                - side: 'long' or 'short'
+                - size: Position size
+                - price: Liquidation price
+                - value_usd: USD value of liquidation
+                - category: 'stocks', 'commodities', 'indices', or 'fx'
+                - timestamp: Event timestamp
+        """
+        response = self._get(f"/api/hip3_liquidations/{timeframe}.json")
+        return response.json()
+
+    def get_hip3_liquidation_stats(self):
+        """
+        Get HIP3 liquidation statistics.
+
+        Returns:
+            dict with:
+                - total_count: Total liquidations
+                - total_volume: Total USD volume liquidated
+                - long_count: Number of long liquidations
+                - short_count: Number of short liquidations
+                - long_volume: USD volume of long liquidations
+                - short_volume: USD volume of short liquidations
+                - by_category: Breakdown by category (stocks, commodities, indices, fx)
+                - by_symbol: Breakdown by individual symbol
+                - top_symbols: Top symbols by liquidation volume
+        """
+        response = self._get("/api/hip3_liquidations/stats.json")
         return response.json()
 
 
