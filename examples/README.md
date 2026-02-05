@@ -28,7 +28,8 @@ Each file in this folder is a standalone Python script that demonstrates one sec
 | `18_hlp_analytics.py` | HLP Analytics | Liquidator status, market maker, timing, correlation |
 | `19_market_data.py` | Market Data | All prices, orderbooks, account state - NO RATE LIMITS |
 | `20_hip3_liquidations.py` | HIP3 Liqs | Stocks, Commodities, Indices & FX liquidations |
-| `21_hip3_market_data.py` | HIP3 Data | **NEW!** OHLCV candles & tick data for 33 TradFi assets |
+| `21_hip3_market_data.py` | HIP3 Data | OHLCV candles & tick data for 33 TradFi assets |
+| `22_position_snapshots.py` | Position Snapshots | **NEW!** Positions near liquidation - squeeze signals |
 
 ---
 
@@ -115,17 +116,37 @@ response = requests.get('https://api.moondev.com/api/trades.json?api_key=YOUR_AP
 | `GET /api/events.json` | Real-time blockchain events |
 | `GET /api/contracts.json` | Contract registry with metadata |
 
-### MULTI-EXCHANGE LIQUIDATIONS
+### MULTI-EXCHANGE LIQUIDATIONS (29x Faster!)
 
+Combines Hyperliquid, Binance, Bybit, OKX with Live + Archive architecture.
+
+**Live Endpoints (30-second updates):**
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/all_liquidations/{timeframe}.json` | Combined liqs from ALL exchanges |
-| `GET /api/all_liquidations/stats.json` | Combined stats with exchange breakdown |
+| `GET /api/all_liquidations/10m.json` | Last 10 minutes |
+| `GET /api/all_liquidations/1h.json` | Last 1 hour |
+| `GET /api/all_liquidations/4h.json` | Last 4 hours |
+| `GET /api/all_liquidations/12h.json` | Last 12 hours |
+| `GET /api/all_liquidations/24h.json` | Last 24 hours |
+| `GET /api/all_liquidations/2d.json` | Last 2 days |
+| `GET /api/all_liquidations/5d.json` | Last 5 days |
+| `GET /api/all_liquidations/stats.json` | Summary statistics |
+
+**Archive Endpoints (15-minute updates):**
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/all_liquidations/7d.json` | Last 7 days |
+| `GET /api/all_liquidations/14d.json` | Last 14 days |
+| `GET /api/all_liquidations/30d.json` | Last 30 days |
+
+**Per-Exchange Endpoints:**
+| Endpoint | Description |
+|----------|-------------|
 | `GET /api/binance_liquidations/{timeframe}.json` | Binance Futures liquidations |
 | `GET /api/bybit_liquidations/{timeframe}.json` | Bybit liquidations |
 | `GET /api/okx_liquidations/{timeframe}.json` | OKX liquidations |
 
-**Timeframes:** 10m, 1h, 4h, 12h, 24h, 2d, 7d, 14d, 30d
+**Timeframes:** 10m, 1h, 4h, 12h, 24h, 2d, 5d (live) | 7d, 14d, 30d (archive)
 
 ### HIP3 LIQUIDATIONS (Stocks, Commodities, Indices, FX)
 
@@ -213,6 +234,30 @@ response = requests.get('https://api.moondev.com/api/trades.json?api_key=YOUR_AP
 | `GET /api/hlp/timing` | Hourly/session profitability analysis |
 | `GET /api/hlp/correlation` | Delta-price correlation by coin |
 
+### POSITION SNAPSHOTS (NEW!)
+
+Track positions within 15% of liquidation on HyperLiquid. Updated every 1 minute.
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/position_snapshots/{symbol}` | Historical snapshots for BTC, ETH, SOL, XRP, HYPE |
+| `GET /api/position_snapshots/stats` | Aggregate statistics for all tracked symbols |
+
+**Snapshot Parameters:**
+| Param | Default | Description |
+|-------|---------|-------------|
+| `hours` | 24 | Lookback period |
+| `limit` | 1000 | Max records to return |
+| `min_distance_pct` | - | Filter by min distance to liquidation |
+| `max_distance_pct` | - | Filter by max distance to liquidation |
+| `side` | - | Filter by 'long' or 'short' |
+
+**Stats Response includes:**
+- Overall stats (total snapshots, unique users, avg distance)
+- Per-symbol breakdown
+- Top 10 positions closest to liquidation
+- Recent scan metadata
+
 ---
 
 ## Python SDK Usage
@@ -297,12 +342,17 @@ hlp_history = api.get_hlp_position_history(hours=24) # Position snapshots
 hlp_liquidators = api.get_hlp_liquidators()          # Liquidator events
 hlp_deltas = api.get_hlp_deltas(hours=24)            # Net exposure changes
 
-# === HLP ADVANCED ANALYTICS (NEW!) ===
+# === HLP ADVANCED ANALYTICS ===
 sentiment = api.get_hlp_sentiment()                  # THE BIG ONE! Z-scores & signals
 liq_status = api.get_hlp_liquidator_status()         # Real-time liquidator status
 market_maker = api.get_hlp_market_maker()            # Strategy B (BTC/ETH/SOL)
 timing = api.get_hlp_timing()                        # Hourly/session profitability
 correlation = api.get_hlp_correlation()              # Delta-price correlation
+
+# === POSITION SNAPSHOTS (NEW!) ===
+btc_snaps = api.get_position_snapshots("BTC", hours=24)           # BTC positions near liq
+eth_risky = api.get_position_snapshots("ETH", max_distance_pct=5) # ETH <5% from liq
+stats = api.get_position_snapshot_stats(hours=12)                 # Aggregate stats
 ```
 
 ---
@@ -421,6 +471,36 @@ python examples/18_hlp_analytics.py
 - Strategy B market maker positions (BTC/ETH/SOL)
 - Timing analysis (best/worst hours, session profitability)
 - Delta-price correlation by coin
+
+### 22_position_snapshots.py - Position Snapshot Dashboard
+
+Track positions near liquidation for squeeze and cascade signals:
+
+```bash
+# Default: all symbols, last 24 hours
+python examples/22_position_snapshots.py
+
+# Specific symbol
+python examples/22_position_snapshots.py BTC
+
+# Filter to positions very close to liquidation
+python examples/22_position_snapshots.py ETH --max-distance 5
+```
+
+**Features:**
+- Positions within 15% of liquidation price
+- Minimum $10k position value filter
+- Tracks BTC, ETH, SOL, XRP, HYPE
+- 1-minute snapshot frequency
+- Historical lookback up to 24+ hours
+- Top 10 closest to liquidation
+- Long/short side filtering
+
+**Use Cases:**
+- Identify potential liquidation cascades
+- Spot short/long squeeze setups
+- Monitor at-risk whale positions
+- Track liquidation pressure building on specific symbols
 
 ---
 

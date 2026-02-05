@@ -135,9 +135,15 @@ def display_recent_depositors(depositors_data):
     ))
 
     if isinstance(depositors_data, dict):
-        depositors = depositors_data.get('depositors', depositors_data.get('addresses', []))
-        # Try to get recent depositors specifically
-        recent = depositors_data.get('recent', depositors[:25] if depositors else [])
+        depositors = depositors_data.get('depositors', depositors_data.get('addresses', {}))
+        # depositors is a dict {address: {total_deposited, deposit_count, last_deposit}}
+        # Convert to list of tuples sorted by last_deposit
+        if isinstance(depositors, dict):
+            recent = sorted(depositors.items(), key=lambda x: x[1].get('last_deposit', ''), reverse=True)[:25]
+        elif isinstance(depositors, list):
+            recent = depositors[:25]
+        else:
+            recent = []
     elif isinstance(depositors_data, list):
         recent = depositors_data[:25]
     else:
@@ -160,34 +166,36 @@ def display_recent_depositors(depositors_data):
         table.add_row("", "[dim]No recent depositors found[/dim]", "", "")
     else:
         for i, depositor in enumerate(recent[:25], 1):
-            if isinstance(depositor, dict):
+            # Handle tuple format (address, data_dict) from sorted dict
+            if isinstance(depositor, tuple):
+                address = depositor[0]
+                data = depositor[1] if len(depositor) > 1 else {}
+                amount = data.get('total_deposited', 0)
+                timestamp = data.get('last_deposit', '')
+            elif isinstance(depositor, dict):
                 address = depositor.get('address', depositor.get('wallet', 'N/A'))
-                amount = depositor.get('amount', depositor.get('value', 0))
-                timestamp = depositor.get('timestamp', depositor.get('time', ''))
+                amount = depositor.get('amount', depositor.get('value', depositor.get('total_deposited', 0)))
+                timestamp = depositor.get('timestamp', depositor.get('time', depositor.get('last_deposit', '')))
+            else:
+                address = str(depositor)
+                amount = 0
+                timestamp = ''
 
-                if isinstance(amount, (int, float)) and amount > 0:
-                    amount_str = format_usd(amount)
-                else:
-                    amount_str = "[dim]--[/dim]"
+            if isinstance(amount, (int, float)) and amount > 0:
+                amount_str = format_usd(amount)
+            else:
+                amount_str = "[dim]--[/dim]"
 
-                if timestamp:
-                    if isinstance(timestamp, (int, float)):
-                        if timestamp > 1e10:
-                            timestamp = timestamp / 1000
-                        try:
-                            time_str = datetime.fromtimestamp(timestamp).strftime("%m-%d %H:%M")
-                        except:
-                            time_str = str(timestamp)[:10]
-                    else:
+            if timestamp:
+                if isinstance(timestamp, (int, float)):
+                    if timestamp > 1e10:
+                        timestamp = timestamp / 1000
+                    try:
+                        time_str = datetime.fromtimestamp(timestamp).strftime("%m-%d %H:%M")
+                    except:
                         time_str = str(timestamp)[:10]
                 else:
-                    time_str = "[dim]--[/dim]"
-            else:
-                # Just an address string
-                address = str(depositor)
-                amount_str = "[dim]--[/dim]"
-                time_str = "[dim]--[/dim]"
-
+                    time_str = str(timestamp)[:16]
             # Rank emoji for top 3
             rank = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else str(i)
 
@@ -217,20 +225,33 @@ def display_depositor_sample(depositors):
 
     table.add_column("#", style="dim", width=6)
     table.add_column("Address", style="cyan", width=44)
-    table.add_column("Status", style="green", width=10)
+    table.add_column("Total Deposited", style="yellow", justify="right", width=14)
 
-    # Show first 20 depositors
-    sample = depositors[:20]
+    # Handle dict format {address: data} or list format
+    if isinstance(depositors, dict):
+        sample = list(depositors.items())[:20]
+        total_count = len(depositors)
+    else:
+        sample = depositors[:20]
+        total_count = len(depositors)
+
     for i, depositor in enumerate(sample, 1):
-        if isinstance(depositor, dict):
+        if isinstance(depositor, tuple):
+            address = depositor[0]
+            data = depositor[1] if len(depositor) > 1 else {}
+            amount = data.get('total_deposited', 0)
+            amount_str = f"${amount/1e6:.1f}M" if amount >= 1e6 else f"${amount/1e3:.1f}K" if amount >= 1e3 else f"${amount:.0f}"
+        elif isinstance(depositor, dict):
             address = depositor.get('address', depositor.get('wallet', str(depositor)))
+            amount_str = "[dim]--[/dim]"
         else:
             address = str(depositor)
+            amount_str = "[dim]--[/dim]"
 
-        table.add_row(str(i), address, "🏦 Active")
+        table.add_row(str(i), address, amount_str)
 
-    if len(depositors) > 20:
-        table.add_row("...", f"[dim]+ {len(depositors) - 20:,} more addresses[/dim]", "")
+    if total_count > 20:
+        table.add_row("...", f"[dim]+ {total_count - 20:,} more addresses[/dim]", "")
 
     console.print(table)
 

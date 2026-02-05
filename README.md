@@ -66,9 +66,10 @@ This data layer gives you access to everything Wall Street kept hidden:
 | What You Can See | Why It Matters |
 |-----------------|----------------|
 | **Liquidations** | See when positions are about to get wiped out - in real-time |
-| **Multi-Exchange Liqs** | Combined liquidations from Hyperliquid, Binance, Bybit, OKX |
+| **Multi-Exchange Liqs** | Combined liquidations from Hyperliquid, Binance, Bybit, OKX (Live + Archive) |
 | **HIP3 Liquidations** | Stocks, Commodities, Indices & FX liquidations (TSLA, GOLD, XYZ100, EUR) |
 | **HIP3 Market Data (NEW!)** | Multi-dex tick data: 51 symbols across xyz, flx, hyna, km |
+| **Position Snapshots** | Track positions within 15% of liquidation (BTC, ETH, SOL, XRP, HYPE) |
 | **Whale Positions** | Track positions for any of 148 symbols (BTC: $1.9B, ETH: $2.7B, HYPE: $528M) |
 | **Buyer Tracking** | $5k+ buyers on HYPE/SOL/XRP/ETH - accumulation signals |
 | **Smart Money Rankings** | Top 100 profitable traders vs Bottom 100 |
@@ -120,6 +121,7 @@ python examples/16_depositors.py          # All Hyperliquid depositors
 python examples/19_market_data.py         # Prices, orderbooks, accounts - NO RATE LIMITS!
 python examples/20_hip3_liquidations.py   # HIP3 liqs: stocks, commodities, indices, FX
 python examples/21_hip3_market_data.py    # HIP3 candles & ticks: TSLA, GOLD, EUR, etc.
+python examples/22_position_snapshots.py  # Positions near liquidation (BTC/ETH/SOL/XRP/HYPE)
 ```
 
 That's it. You're now seeing what Wall Street sees.
@@ -152,7 +154,8 @@ Every example is a standalone Python script with beautiful terminal output. Run 
 | `18_hlp_analytics.py` | HLP liquidators, market maker, timing, correlation |
 | `19_market_data.py` | All prices, orderbooks, account state - NO RATE LIMITS |
 | `20_hip3_liquidations.py` | HIP3 liquidations - stocks, commodities, indices, FX |
-| `21_hip3_market_data.py` | **NEW!** HIP3 OHLCV candles & tick data for 33 TradFi assets |
+| `21_hip3_market_data.py` | HIP3 OHLCV candles & tick data for 33 TradFi assets |
+| `22_position_snapshots.py` | **NEW!** Positions within 15% of liquidation - squeeze signals |
 
 See the [examples/README.md](examples/README.md) for the API reference, or visit **https://moondev.com/docs** for the full documentation.
 
@@ -291,6 +294,98 @@ for fill in fills[:5]:
 candles = api.get_candles("BTC", interval="1m")
 for c in candles[-5:]:
     print(f"O:{c['o']} H:{c['h']} L:{c['l']} C:{c['c']}")
+```
+
+---
+
+## Multi-Exchange Liquidations (29x Faster!)
+
+The all-liquidations API combines data from Hyperliquid, Binance, Bybit, and OKX with a high-performance architecture:
+
+**Base URL:** `https://api.moondev.com/api/all_liquidations/`
+
+### Live Endpoints (30-second updates)
+| Endpoint | Description |
+|----------|-------------|
+| `10m.json` | Last 10 minutes |
+| `1h.json` | Last 1 hour |
+| `4h.json` | Last 4 hours |
+| `12h.json` | Last 12 hours |
+| `24h.json` | Last 24 hours |
+| `2d.json` | Last 2 days |
+| `5d.json` | Last 5 days |
+| `stats.json` | Summary statistics |
+
+### Archive Endpoints (15-minute updates)
+| Endpoint | Description |
+|----------|-------------|
+| `7d.json` | Last 7 days |
+| `14d.json` | Last 14 days |
+| `30d.json` | Last 30 days |
+
+**Performance:** Split architecture achieves 5-second cycles vs 150-second legacy - 29x faster data freshness.
+
+---
+
+## Position Snapshots API (NEW!)
+
+Track positions close to liquidation on HyperLiquid. Perfect for identifying squeeze setups and liquidation cascades.
+
+**Features:**
+- Snapshots every 1 minute
+- Tracks: BTC, ETH, SOL, XRP, HYPE
+- Positions within 15% of liquidation price
+- Minimum $10k position value
+
+### Get Historical Snapshots
+
+```
+GET /api/position_snapshots/{symbol}
+```
+
+**Parameters:**
+| Param | Default | Description |
+|-------|---------|-------------|
+| `symbol` | required | BTC, ETH, SOL, XRP, HYPE |
+| `hours` | 24 | Lookback period |
+| `limit` | 1000 | Max records |
+| `min_distance_pct` | - | Filter by min distance to liquidation |
+| `max_distance_pct` | - | Filter by max distance to liquidation |
+| `side` | - | Filter by 'long' or 'short' |
+
+### Get Aggregate Statistics
+
+```
+GET /api/position_snapshots/stats
+```
+
+**Parameters:**
+| Param | Default | Description |
+|-------|---------|-------------|
+| `hours` | 24 | Lookback period |
+
+**Returns:**
+- Overall stats (total snapshots, unique users, avg distance to liquidation)
+- Per-symbol breakdown
+- Top 10 positions closest to liquidation
+- Recent scan metadata
+
+### Python Usage
+
+```python
+from api import MoonDevAPI
+
+api = MoonDevAPI()
+
+# Get BTC positions near liquidation
+btc_snapshots = api.get_position_snapshots("BTC", hours=24)
+
+# Filter to positions very close to liquidation
+risky = api.get_position_snapshots("ETH", max_distance_pct=5)
+
+# Get aggregate stats
+stats = api.get_position_snapshot_stats(hours=12)
+print(f"Top 10 at risk: {stats['top_10_closest']}")
 ```
 
 ---
